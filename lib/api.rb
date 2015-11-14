@@ -1,8 +1,13 @@
+require "bundler/setup"
+
+Bundler.setup
+
 require "grape"
-require "pg"
-require "json"
 
 class Api < Grape::API
+  require "pg"
+  require "json"
+
   format :json
 
   helpers do
@@ -39,12 +44,35 @@ class Api < Grape::API
   end
 
   get "/tasks" do
+<<<<<<< HEAD:api/api.rb
     read_all
   end
 
   post "/tasks" do
   	attrs = {title: params[:title], description: params[:description]}
   	create(attrs)
+=======
+    conn = PG.connect(:dbname => 'apiapp')
+    queryResult = conn.exec("SELECT * FROM tasks ORDER BY requests_count DESC")
+    resArray = Array.new
+    queryResult.each do |row|
+      resArray.push({
+        id: row['id'], 
+        title: row['title'], 
+        description: row['description'], 
+        requests_count: row['requests_count']})
+    end  
+    response = (resArray.map { |o| Hash[o.each_pair.to_a] }).to_json
+    JSON.parse(response)
+  end
+
+  post "/tasks" do
+    title = params[:title]
+    description = params[:description]
+    conn = PG.connect(:dbname => 'apiapp')
+    conn.exec("INSERT INTO tasks VALUES (DEFAULT, '#{title}', '#{description}', 0)")
+    {}
+>>>>>>> 1942d660462884007933aaf1f38a441ff9bb3c64:lib/api.rb
   end
 
   get "/tasks/:id" do
