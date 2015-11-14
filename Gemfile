@@ -1,0 +1,11 @@
+source 'https://rubygems.org'
+
+gem "pg"
+gem "grape"
+
+group :development, :test do
+  gem "rspec"
+  gem "mutant-rspec"
+  gem "guard-rspec"
+  gem "rack-test"
+end
