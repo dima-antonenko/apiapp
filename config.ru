@@ -1,3 +1,3 @@
-require_relative "api/api"
+require_relative "lib/api"
 
 run Api

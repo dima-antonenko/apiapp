@@ -3,6 +3,8 @@ require "bundler/setup"
 Bundler.setup
 
 require "grape"
+require "pg"
+require "json"
 
 class Api < Grape::API
   format :json
@@ -13,17 +15,23 @@ class Api < Grape::API
     end
 
     def read_all
-      connection.exec("SELECT * FROM tasks ORDER BY requests_count DESC").to_a
+      connection.exec("SELECT t.* FROM tasks AS t JOIN analytics AS a ON a.id = t.id ORDER BY a.requests_count DESC").to_a
     end
 
     def create(attrs)
-      connection.exec(
-        "INSERT INTO tasks VALUES (DEFAULT, '#{attrs[:title]}', '#{attrs[:description]}', 0) RETURNING id, title, description")[0]
+      res = connection.exec(
+        "INSERT INTO tasks VALUES (DEFAULT, '#{attrs[:title]}', '#{attrs[:description]}') RETURNING id, title, description")[0]
+      id = res['id']
+      connection.exec("INSERT INTO analytics VALUES (#{id}, 0)")
+      res
     end
 
     def read(id)
       res = connection.exec("SELECT * FROM tasks WHERE id=#{id}")
       if(res.ntuples > 0) 
+        count = connection.exec("SELECT requests_count FROM analytics WHERE id=#{id}")[0]['requests_count'].to_i
+        count = count + 1
+        connection.exec("UPDATE analytics SET requests_count=#{count} WHERE id=#{id}")
         res[0]
       else 
         {}
@@ -36,6 +44,7 @@ class Api < Grape::API
 
     def delete(id)
       connection.exec("DELETE FROM tasks WHERE id=#{id}")
+      connection.exec("DELETE FROM analytics WHERE id=#{id}")
       id
     end
   end
