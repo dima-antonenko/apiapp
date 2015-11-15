@@ -54,7 +54,7 @@ class Api < Grape::API
   end
 
   post "/tasks" do
-    attrs = {title: params[:title], description: params[:description]}
+    attrs = params.extract!(:title, :description)
     create(attrs)
   end
 
@@ -64,7 +64,7 @@ class Api < Grape::API
   end
 
   patch "/tasks/:id" do
-    attrs = {id: params[:id], title: params[:title], description: params[:description]}
+    attrs = params.extract!(:id, :title, :description)
     update(attrs)
   end
 
