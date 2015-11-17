@@ -43,8 +43,7 @@ class Api < Grape::API
     end
 
     def delete(id)
-      connection.exec("DELETE FROM tasks WHERE id=#{id}")
-      connection.exec("DELETE FROM analytics WHERE id=#{id}")
+      connection.exec("BEGIN; DELETE FROM tasks WHERE id=#{id}; DELETE FROM analytics WHERE id=#{id}; COMMIT;")
       id
     end
   end
