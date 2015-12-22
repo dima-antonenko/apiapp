@@ -118,6 +118,7 @@ GEM
       rack (>= 1.0.0)
     rack-test (0.6.3)
       rack (>= 1.0)
+    rake (10.4.2)
     rb-fsevent (0.9.6)
     rb-inotify (0.9.5)
       ffi (>= 0.5.0)
@@ -164,8 +165,9 @@ DEPENDENCIES
   mutant-rspec
   pg
   rack-test
+  rake (~> 10.4, >= 10.4.2)
   redis
   rspec
 
 BUNDLED WITH
-   1.10.6
+   1.11.0

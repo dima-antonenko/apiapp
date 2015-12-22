@@ -16,11 +16,11 @@ class Api < Grape::API
     end
 
     def connection
-      @conn ||= PG.connect(dbname: 'apiapp')
+      @conn ||= PG.connect(dbname: 'apiapp', user: 'apiapp', password: '12345')
     end
 
     def read_all
-      connection.exec("SELECT t.* FROM tasks AS t JOIN analytics AS a ON a.id = t.id ORDER BY a.requests_count DESC").to_a
+      connection.exec("SELECT * FROM tasks JOIN analytics USING task_id").to_a
     end
 
     def create(attrs)
